@@ -71,9 +71,6 @@ Matrix::Matrix(string filename)
     // close the file
     file.close();
 
-    // setup the permutation object
-    perm = new Permutation(cols);
-
     // setup the jobCosts array
     jobCosts = new int[cols];
 }
@@ -121,9 +118,6 @@ Matrix::Matrix(int filename)
     // close the file
     file.close();
 
-    // setup the permutation object
-    perm = new Permutation(cols);
-
     // setup the jobCosts array
     jobCosts = new int[cols];
 }
@@ -139,9 +133,6 @@ Matrix::~Matrix()
 
     if (jobCosts != nullptr)
         delete[] jobCosts;
-
-    if (perm != nullptr)
-        delete perm;
 }
 
 
@@ -199,42 +190,7 @@ int* Matrix::getJobCosts()
 
 
 
-void Matrix::generateBestPermutation()
-{
-    // initialize the perm.allJobs matrix and sort it from worst to best
-    initAllJobs();
-    perm->sortAllJobs();
 
-    // create the initial permutation
-    perm->addElement(perm->getJobOrder(0));
-
-    // for each job
-    for (int i = 1; i < cols; ++i)
-    {
-        // add the new element to the permutation and increase curSize
-        perm->addElement(perm->getJobOrder(i));
-        perm->incrimentCurSize();
-
-        // store the fitness and order of the current permutation
-        // perm->setBestVal();
-
-        // move the newest job through array and record the best fit and its perm
-    }
-}
-
-
-
-
-
-
-
-
-
-void Matrix::initAllJobs()
-{
-    generateJobCosts();
-    perm->setAllJobs(jobCosts);
-}
 
 
 void Matrix::resize(const int newR, const int newC)
@@ -271,15 +227,13 @@ void Matrix::print()
     for (int r = 0; r < rows; ++r)
     {
         for (int c = 0; c < cols; ++c)
-        {
             cout << matrix[r][c] << "\t";
-        }
 
         cout << "\n";
     }
 }
 
-void Matrix::printByPerm()
+void Matrix::printByPerm(Permutation* perm)
 {
     // print out row/col numbers
     cout << "Rows:    " << rows << "\n";

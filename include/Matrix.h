@@ -17,8 +17,6 @@ private:
     int** matrix;       // [rows][cols]
 
 public:
-    Permutation* perm;  // public to make using its functions easier
-
     // constructors and destructors
     Matrix(const int row, const int col);
     Matrix(string fileName);
@@ -39,15 +37,10 @@ public:
     int  getVal(const int row, const int col);
     void setVal(int newVal, const int row, const int col);
 
-    // functions for perm
-    void generateBestPermutation();
-    void initAllJobs();
-    void sortAllJobs();
-
     // misc functions
     void resize(const int newRows, const int newCols);
     void print();
-    void printByPerm();
+    void printByPerm(Permutation* perm);
 };
 
 #endif
