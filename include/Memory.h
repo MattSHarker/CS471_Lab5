@@ -38,6 +38,11 @@ public:
     void setBestPermutation(int* newPerm);
     void resizeBestPermutation(const int newSize);
 
+    // overall functions
+    void recordData(Matrix* jobTimes, Matrix* complTimes, Permutation* perm, const int alg);
+    void writeCSV(Matrix* jobTimes, Matrix* complTimes, Permutation* perm, const int alg, const int datafile);
+
+
 };
 
 #endif

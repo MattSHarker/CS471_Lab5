@@ -1,5 +1,12 @@
 
+
+#include <fstream>
+#include <sstream>
+
+#include "flowshop.h"
+#include "Matrix.h"
 #include "Memory.h"
+#include "Permutation.h"
 
 
 Memory::Memory()
@@ -11,7 +18,7 @@ Memory::Memory(const int s)
 {
     funcCalls = 0;
 
-    size = s
+    size = s;
     bestPermutation = new int[size];
 }
 
@@ -93,5 +100,88 @@ void Memory::resizeBestPermutation(const int s)
 
     // destroy the temp array
     delete[] temp;
+}
+
+
+void Memory::recordData(Matrix* jobs, Matrix* comp, Permutation* perm, const int alg)
+{
+    // record the original fitness
+    if (alg == 0) originalFit == fss  (jobs, comp);
+    else if (alg == 1) originalFit == fssb (jobs, comp);
+    else if (alg == 2) originalFit == fssnw(jobs, comp);
+
+    // record the permutation
+    for (int i = 0; i < perm->getSize(); ++i)
+        bestPermutation[i] = perm->getBest(i);
+}
+
+void Memory::writeCSV(Matrix* jobs, Matrix* comp, Permutation* perm, const int alg, const int datafile)
+{
+    // set the correct path to write the file to
+    string pathname = "results/";
+    if      (alg == 0) pathname += "FSS/fss-";
+    else if (alg == 1) pathname += "FSSB/fssb-";
+    else if (alg == 2) pathname += "FSSNW/fssnw-";
+
+    // add the number of the file and the extension to the path name
+    pathname += to_string(datafile) += ".txt";
+
+    // open or create the csv
+    ofstream csv(pathname);
+
+    // write the sizes of the matrix
+    csv << jobs->getRows() << " " << jobs->getCols() << '\n';
+
+    // write the number of func calls
+    csv << funcCalls << '\n';
+
+    // write the optimized fitness and the original fitness
+    csv << perm->getBestVal() << '\n';
+    
+    Matrix* temp = new Matrix(jobs->getRows(), jobs->getCols());
+    if      (alg == 0) csv << fss  (jobs, temp) << '\n';
+    else if (alg == 1) csv << fssb (jobs, temp) << '\n';
+    else if (alg == 2) csv << fssnw(jobs, temp) << '\n';
+    delete temp;
+
+    // write the permutation sequence
+    csv << "\nPermutaion sequence:\n";
+    csv << perm->getBest(0);
+    for (int i = 1; i < perm->getSize(); ++i)
+        csv << "," << perm->getBest(i);
+    csv << '\n';
+
+    // write the completion times
+    csv << "\nCompletion times:\n";
+
+    for (int r = 0; r < jobs->getRows(); ++r)
+    {
+        // write first value for no trailing commas
+        csv << comp->getVal(r, 0);
+
+        // write the rest of the values
+        for (int c = 1; c < jobs->getCols(); ++c)
+            csv << "," << comp->getVal(r, c);
+        csv << '\n';
+    }
+
+
+    // write the start times (completion time minues)
+    csv << "\nStart times:\n";
+
+    for (int r = 0; r < jobs->getRows(); ++r)
+    {
+        // write first value for no trailing commas
+        int ind = perm->getPerm(0);
+        csv << comp->getVal(r, 0) - jobs->getVal(r, ind);
+
+        // write the rest of the values
+        for (int c = 1; c < jobs->getCols(); ++c)
+        {
+            ind = perm->getPerm(c);
+            csv << "," << comp->getVal(r, c) - jobs->getVal(r, ind);
+        }
+        csv << '\n';
+    }
 }
 
