@@ -2,8 +2,6 @@
 #ifndef PERMUTATION_H
 #define PERMUTATION_H
 
-#include <vector>
-
 class Permutation {
 private:
     int size;       // the size of the permutation (number of jobs (cols))
@@ -12,7 +10,7 @@ private:
 
     int bestVal;    // the value of the (current) best permutation
 
-    int* perm;      // holds the current permutation
+    int* perm;      // holds the current permutation (indices)
     int* best;      // the (current) best permutation
 
     int** allJobs;   // holds the indices of each job in from worst to best cost
@@ -46,6 +44,7 @@ public:
     void nextPermutation();
     void addElement(const int newElement);
     void resize(const int newSize);
+    void printCurrentPermutation();
 
     // functions for best
     int  getBest(const int elem);
@@ -55,12 +54,14 @@ public:
 
     // functions for allJobs
     int  getJobOrder(const int elem);
-    int  getJobIndex(const int elem);
+    int  getJobValue(const int elem);
     int* getJobOrder();
     void setAllJobs(const int* costs);
     void sortAllJobs();
     void printAllJobs();
 
+    // misc functions
+    void print();
 };
 
 #endif

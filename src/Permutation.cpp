@@ -3,6 +3,7 @@
 #include <climits>
 
 #include "Permutation.h"
+// #include "Matrix.h"
 
 using namespace std;
 
@@ -138,7 +139,12 @@ void Permutation::resize(const int newSize)
     delete[] temp;
 }
 
-
+void Permutation::printCurrentPermutation()
+{
+    for (int i = 0; i < curSize; ++i)
+        cout << perm[i] << ' ';
+    cout << '\n';
+}
 
 
 void Permutation::setCurrentToBest()
@@ -156,7 +162,7 @@ void Permutation::setBestToCurrent()
     
     // for the rest
     for (int i = curSize; i < size; ++i)
-        perm[i] = 0;
+        perm[i] = 9;
 }
 
 int Permutation::getBest(const int elem)
@@ -168,6 +174,9 @@ int* Permutation::getBest()
 {
     return best;
 }
+
+
+
 
 
 int Permutation::getJobOrder(const int elem)
@@ -234,5 +243,18 @@ void Permutation::printAllJobs()
         cout << allJobs[1][i] << '\t';
     cout << '\n';
 }
+
+
+void Permutation::print()
+{
+    cout << "size: "    << size    << "\n";
+    cout << "curSize: " << curSize << "\n";
+    cout << "pos: "     << pos     << "\n";
+    cout << "bestVal: " << bestVal << "\n";
+
+    printAllJobs();
+
+}
+
 
 
