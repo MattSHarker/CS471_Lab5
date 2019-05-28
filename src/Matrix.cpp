@@ -15,70 +15,25 @@ Matrix::Matrix(const int r, const int c)
     rows = r;
     cols = c;
 
-    jobCosts = new int[cols];
-
     // construct the matrix
-    matrix = new int*[cols];
-    for (int i = 0; i < cols; ++i)
-        matrix[i] = new int[rows];
+    matrix = new int*[rows];
+    for (int i = 0; i < rows; ++i)
+        matrix[i] = new int[cols];
 
     // set default values to 0
-    for (int i = 0; i < cols; ++i)
-        for (int j = 0; j < rows; ++j)
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j)
             matrix[i][j] = 0;
-}
-
-Matrix::Matrix(string filename)
-{
-    // finalize the pathname of the file
-    string pathname = "parameters/" + filename ;
-
-    // string to hold the current line
-    string val;
-
-    // open the file
-    ifstream file(pathname);
-    if (file.is_open())
-    {
-        // first line contains rows and columns
-        file >> rows;
-        file >> cols;
-
-        // construct the matrix
-        matrix = new int*[rows];
-        for (int i = 0; i < rows; ++i)
-            matrix[i] = new int[cols];
-
-        // read in and assign the values to the matrix
-        for (int i = 0; i < rows; ++i)
-        {
-            // set the value of the elements in the row
-            for (int j = 0; j < cols; ++j)
-            {
-                // get the value and assign it
-                file >> val;
-                matrix[i][j] = stoi(val);
-            }
-        }
-    }
-    else
-    {
-        // if the file could not be opened
-        cout << "Matrix input file count not be found\n";
-        exit(EXIT_FAILURE);
-    }
-
-    // close the file
-    file.close();
-
-    // setup the jobCosts array
+    
+    // construct jobCosts array
     jobCosts = new int[cols];
 }
+
 
 Matrix::Matrix(int filename)
 {
     // finalize the pathname of the file
-    string pathname = "parameters/" + to_string(filename) + ".txt";
+    string pathname = "DataFiles/" + to_string(filename) + ".txt";
 
     // string to hold the current line
     string val;
@@ -120,6 +75,7 @@ Matrix::Matrix(int filename)
 
     // setup the jobCosts array
     jobCosts = new int[cols];
+    generateJobCosts();
 }
 
 Matrix::~Matrix()
@@ -148,15 +104,6 @@ int Matrix::getCols()
 }
 
 
-void Matrix::setVal(int newVal, const int r, const int c)
-{
-    matrix[r][c] = newVal;
-}
-
-int Matrix::getVal(const int r, const int c)
-{
-    return matrix[r][c];
-}
 
 
 void Matrix::generateJobCosts()
@@ -184,14 +131,27 @@ int* Matrix::getJobCosts()
 }
 
 
+int Matrix::getVal(const int r, const int c)
+{
+    return matrix[r][c];
+}
 
+int Matrix::getFinalVal()
+{
+    return matrix[rows-1][cols-1];
+}
 
+void Matrix::setVal(int newVal, const int r, const int c)
+{
+    matrix[r][c] = newVal;
+}
 
-
-
-
-
-
+void Matrix::clearMatrix()
+{
+    for (int r = 0; r < rows; ++r)
+        for (int c = 0; c < cols; ++c)
+            matrix[r][c] = 0;
+}
 
 void Matrix::resize(const int newR, const int newC)
 {
@@ -233,7 +193,7 @@ void Matrix::print()
     }
 }
 
-void Matrix::printByPerm(Permutation* perm)
+void Matrix::printByFullPerm(Permutation* perm)
 {
     // print out row/col numbers
     cout << "Rows:    " << rows << "\n";
@@ -265,6 +225,41 @@ void Matrix::printByPerm(Permutation* perm)
     }
     cout << '\n';
 }
+
+
+void Matrix::printByCurrentPerm(Permutation* perm)
+{
+    // print out row/col numbers
+    cout << "Rows:    " << rows << "\n";
+    cout << "Columns: " << cols << "\n";
+
+    // print out the matrix
+    for (int r = 0; r < rows; ++r)
+    {
+        for (int c = 0; c < perm->getCurSize(); ++c)
+        {
+            int index = perm->getPerm(c);
+            cout << matrix[r][index] << '\t';
+
+        }
+
+        cout << '\n';
+    }
+    cout << '\n';
+
+    for (int c = 0; c < cols; ++c)
+    {
+        cout << perm->getJobValue(c) << '\t';
+    }
+    cout << '\n';
+
+    for (int c = 0; c < cols; ++c)
+    {
+        cout << perm->getJobOrder(c) << '\t';
+    }
+    cout << '\n';
+}
+
 
 
 

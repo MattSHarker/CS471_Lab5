@@ -10,8 +10,8 @@ using namespace std;
 
 class Matrix {
 private:
-    int cols;
     int rows;
+    int cols;
 
     int*  jobCosts;     // holds the total cost of each column
     int** matrix;       // [rows][cols]
@@ -19,7 +19,6 @@ private:
 public:
     // constructors and destructors
     Matrix(const int row, const int col);
-    Matrix(string fileName);
     Matrix(int fileName);
 
     ~Matrix();
@@ -35,12 +34,15 @@ public:
 
     // functions for matrix
     int  getVal(const int row, const int col);
+    int  getFinalVal();
     void setVal(int newVal, const int row, const int col);
+    void clearMatrix();
 
     // misc functions
     void resize(const int newRows, const int newCols);
     void print();
-    void printByPerm(Permutation* perm);
+    void printByFullPerm(Permutation* perm);
+    void printByCurrentPerm(Permutation* perm);
 };
 
 #endif
