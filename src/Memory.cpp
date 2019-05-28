@@ -1,5 +1,4 @@
 
-
 #include <fstream>
 #include <sstream>
 
@@ -123,22 +122,16 @@ void Memory::writeCSV(Matrix* jobs, Matrix* comp, Permutation* perm, const int a
     else if (alg == 1) pathname += "FSSB/fssb-";
     else if (alg == 2) pathname += "FSSNW/fssnw-";
 
-    // add the number of the file and the extension to the path name
-    pathname += to_string(datafile) += ".txt";
-
-    // open or create the csv
+    // add the number of the file and the extension to the path name and open it
+    pathname += to_string(datafile) += ".csv";
     ofstream csv(pathname);
 
-    // write the sizes of the matrix
-    csv << jobs->getRows() << " " << jobs->getCols() << '\n';
-
-    // write the number of func calls
-    csv << funcCalls << '\n';
+    csv << jobs->getRows() << " " << jobs->getCols() << '\n';   // dimensions of the matrix
+    csv << funcCalls << '\n';                                   // number of func calls
 
     // write the optimized fitness and the original fitness
-    csv << perm->getBestVal() << '\n';
-    
-    Matrix* temp = new Matrix(jobs->getRows(), jobs->getCols());
+    csv << perm->getBestVal() << '\n';    
+    Matrix* temp = new Matrix(jobs->getRows(), jobs->getCols());    // temp mtx to preserve data
     if      (alg == 0) csv << fss  (jobs, temp) << '\n';
     else if (alg == 1) csv << fssb (jobs, temp) << '\n';
     else if (alg == 2) csv << fssnw(jobs, temp) << '\n';
