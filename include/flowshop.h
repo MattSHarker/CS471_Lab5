@@ -3,6 +3,17 @@
 #define FLOWSHOP_H
 
 #include "Matrix.h"
+#include "Memory.h"
+#include "Permutation.h"
+
+void runFlowshop();
+void flowshop(Memory* mem, const int datafile, const int alg);
+int  fssType(Matrix* jobs, Matrix* comp, Permutation* perm, const int alg);
+
+int fssPerm  (Matrix* processTimes, Matrix* finalTimes, Permutation* perm);
+int fssbPerm (Matrix* processTimes, Matrix* finalTimes, Permutation* perm);
+int fssnwPerm(Matrix* processTimes, Matrix* finalTimes, Permutation* perm);
+
 
 int fss  (Matrix* processTimes, Matrix* finalTimes);
 int fssb (Matrix* processTimes, Matrix* finalTimes);
@@ -13,5 +24,11 @@ int newTimeFSSB (Matrix* processTimes, Matrix* finalTimes, const int row, const 
 int newTimeFSSNW(Matrix* processTimes, Matrix* finalTimes, const int row, const int col);
 
 void incrimentPastJobs(Matrix* finalTimes, int difference, const int curRow, const int col);
+
+int baseTimeFSSPerm (Matrix* jobs, Matrix* compTime, Permutation* perm, const int r, const int c);
+int newTimeFSSBPerm (Matrix* jobs, Matrix* compTime, Permutation* perm, const int r, const int c);
+int newTimeFSSNWPerm(Matrix* jobs, Matrix* compTime, Permutation* perm, const int r, const int c);
+
+void initialize(Matrix* jobTimes, Permutation* perm);
 
 #endif
