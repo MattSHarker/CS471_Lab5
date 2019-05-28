@@ -13,38 +13,60 @@
  */
 
 #include <climits>
+// #include <ctpl_stl.h>
 #include <iostream>
+#include <thread>
+#include <vector>
 
 #include "flowshop.h"
+#include "ThreadPool.h"
+
+using namespace std;
 
 void runFlowshop()
 {
+    // get the # of possible active threads 
     Memory* mem = new Memory();
-    // for each algorithm type
-    for (int i = 0; i < 3; ++i)
-    {
+    int numThreads =  thread::hardware_concurrency();
 
+    // setup thread pooling
+    ThreadPool tp(numThreads);       // 4 active threads because it's a safe number
+    vector<future<int>> futures;
+    
+    // for each algorithm
+    for (int i = 1; i < 3; ++i)
+    {
         if      (i == 0) cout << "Starting FSS...\n";
         else if (i == 1) cout << "Starting FSSB...\n";
         else if (i == 2) cout << "Starting FSSNW...\n";
 
-        // for each file in the provided dataset
-        for (int j = 1; j < 120; ++j)
+        // for each file
+        for (int j = 1; j <= 120; ++j)
         {
-            cout << "running " << j << endl;
-            flowshop(mem, j, i);
+            // add it to the pool
+            futures.emplace_back(
+                tp.enqueue(&flowshop, mem, j, i)
+            );
         }
-        
+
+        // join them
+        for (int j = 0; j < futures.size(); ++j)
+        {
+            int val = futures[j].get();
+        }
+
+        // clear future list
+        futures.clear();
+
         if      (i == 0) cout << "FSS has completed\n";
         else if (i == 1) cout << "FSSB has completed\n";
         else if (i == 2) cout << "FSSNW has completed\n";
-
     }
 
     delete mem;
 }
 
-void flowshop(Memory* mem, const int datafile, const int alg)
+int flowshop(Memory* mem, const int datafile, const int alg)
 {
     // create a matrix for job times and one for completion times
     Matrix* jobs = new Matrix(datafile);
@@ -99,6 +121,8 @@ void flowshop(Memory* mem, const int datafile, const int alg)
     delete jobs;
     delete comp;
     delete perm;
+
+    return 0;
 }
 
 
@@ -137,9 +161,9 @@ int fssPerm(Matrix* jobs, Matrix* compTime, Permutation* perm)
     int curSize = perm->getCurSize();
 
     // loop through the matrix and create the next values
-    for (int r = 0; r < jobs->getRows(); ++r)
+    for (int c = 0; c < curSize; ++c)
     {
-        for (int c = 0; c < curSize; ++c)
+        for (int r = 0; r < jobs->getRows(); ++r)
         {
             // calculate the new time and assign it
             int time = baseTimeFSSPerm(jobs, compTime, perm, r, c);
@@ -158,9 +182,9 @@ int fssbPerm(Matrix* jobs, Matrix* compTime, Permutation* perm)
     int curSize = perm->getCurSize();
 
     // loop through the matrix and create the next values
-    for (int r = 0; r < jobs->getRows(); ++r)
+    for (int c = 0; c < curSize; ++c)
     {
-        for (int c = 0; c < curSize; ++c)
+        for (int r = 0; r < jobs->getRows(); ++r)
         {
             // calculate the new time and assign it
             int time = newTimeFSSBPerm(jobs, compTime, perm, r, c);
@@ -179,9 +203,9 @@ int fssnwPerm(Matrix* jobs, Matrix* compTime, Permutation* perm)
     int curSize = perm->getCurSize();
 
     // loop through the matrix and create the next values
-    for (int r = 0; r < jobs->getRows(); ++r)
+    for (int c = 0; c < curSize; ++c)
     {
-        for (int c = 0; c < curSize; ++c)
+        for (int r = 0; r < jobs->getRows(); ++r)
         {
             // calculate the new time and assign it
             int time = newTimeFSSNWPerm(jobs, compTime, perm, r, c);
@@ -406,14 +430,15 @@ int newTimeFSSBPerm(Matrix* jobs, Matrix* compTime, Permutation* perm, const int
     // edge case for r == 0, c > 0
     if (r == 0 && c > 0)
     {
-        int val1 = compTime->getVal(r, c-1) + jobs->getVal(r, colInd);
-        int val2 = compTime->getVal(r+1, c-1); 
+        int val1 = compTime->getVal(0, c-1) + jobs->getVal(0, colInd);
+        int val2 = compTime->getVal(1, c-1); 
         return max(val1, val2);
     }
 
-
     // if not an edge case, then return the max of the values to the left and above
-    return max(compTime->getVal(r+1, c-1), compTime->getVal(r-1, c) + jobs->getVal(r, colInd));
+    int val1 = compTime->getVal(r+1, c-1);
+    int val2 = compTime->getVal(r-1, c) + jobs->getVal(r, colInd);
+    return max(val1, val2);
 }
 
 int newTimeFSSNWPerm(Matrix* jobs, Matrix* compTime, Permutation* perm, const int r, const int c)
@@ -439,10 +464,3 @@ int newTimeFSSNWPerm(Matrix* jobs, Matrix* compTime, Permutation* perm, const in
     // return the new value
     return compTime->getVal(r-1, c) + jobs->getVal(r, colInd);
 }
-
-
-
-
-
-
-
