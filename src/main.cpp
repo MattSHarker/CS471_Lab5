@@ -1,24 +1,13 @@
 
 #include <iostream>
 
+#include "Permutation.h"
 #include "Matrix.h"
+#include "Memory.h"
 #include "flowshop.h"
 
 int main()
 {
-    Matrix* jobs  = new Matrix("1.txt");
-    Matrix* compTimes = new Matrix(jobs->getRows(), jobs->getCols());
-
-    int finalVal = fssnw(jobs, compTimes);
-
-    cout << "final val: " << finalVal << endl;
-    compTimes->print();
-
-    jobs->
-
-
-    delete jobs;
-    delete compTimes;
-
+    runFlowshop();
     return 0;
 }
