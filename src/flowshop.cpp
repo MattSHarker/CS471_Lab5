@@ -62,12 +62,11 @@ void runFlowshop()
     vector<future<int>> futures;
 
     // create and initialize variables for the files to run
-    int start;
-    int end;
-    initStartEnd(start, end);
+    int start, end, algStart, algEnd;
+    getParameters(start, end, algStart, algEnd);
 
     // for each algorithm
-    for (int i = 0; i <= 2; ++i)
+    for (int i = algStart; i <= algEnd; ++i)
     {
         if      (i == 0) cout << "Starting FSS...\n";
         else if (i == 1) cout << "Starting FSSB...\n";
@@ -178,9 +177,9 @@ int fssType(Matrix* jobs, Matrix* comp, const int alg)
 {
     switch(alg)
     {
-        case 0: return fss(jobs, comp);
-        case 1: return fssb(jobs, comp);
-        case 2: return fssnw(jobs, comp);
+        case 1: return fss(jobs, comp);
+        case 2: return fssb(jobs, comp);
+        case 3: return fssnw(jobs, comp);
     }
 }
 
@@ -188,9 +187,9 @@ int fssTypePerm(Matrix* jobs, Matrix* comp, Permutation* perm, const int alg)
 {
     switch(alg)
     {
-        case 0: return fssPerm(jobs, comp, perm);
-        case 1: return fssbPerm(jobs, comp, perm);
-        case 2: return fssnwPerm(jobs, comp, perm);
+        case 1: return fssPerm(jobs, comp, perm);
+        case 2: return fssbPerm(jobs, comp, perm);
+        case 3: return fssnwPerm(jobs, comp, perm);
     }
 }
 
@@ -205,7 +204,7 @@ void initialize(Matrix* jobs, Permutation* perm)
 }
 
 
-void initStartEnd(int &start, int &end)
+void initStartEnd(int &start, int &end, int &alg)
 {
     // open file to get params
     string path = "parameters/parameters.txt";
@@ -216,6 +215,24 @@ void initStartEnd(int &start, int &end)
         // retreive the values
         file >> start;
         file >> end;
+        file >> algStart;
+
+        if (algStart == 0)
+        {
+            // loop through all algorithm
+            algStart = 1;
+            algEnd = 3;
+        }
+        else if (algStart > 0 && algStart < 4)
+        {
+            algEnd = algStart
+        }
+        else
+        {
+            cout << "Specified algorithm is not within acceptable range, exiting program\n";
+            exit(EXIT_FAILURE);
+        }
+
     }
     else
     {

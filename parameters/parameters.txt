@@ -1,10 +1,11 @@
-0
+1
 120
-
+0
 
 |------|------------------------|--------------------|
 | Line | What it is             | Suggested values   |
 |------|------------------------|--------------------|
-|   1  | First file to process  | 1                  |
-|   2  | Final file to process  | 120                |
+|   1  | First file to process  |         1          |
+|   2  | Final file to process  |        120         |
+|   3  | Which algorithm to run |  0-4 (see readme)  |
 |------|------------------------|--------------------|
