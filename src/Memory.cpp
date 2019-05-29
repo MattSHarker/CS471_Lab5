@@ -127,7 +127,7 @@ void Memory::writeCSV(Matrix* jobs, Matrix* comp, Permutation* perm, const int a
     ofstream csv(pathname);
 
     csv << jobs->getRows() << " " << jobs->getCols() << '\n';   // dimensions of the matrix
-    csv << funcCalls << '\n';                                   // number of func calls
+    csv << funcCalls << "\n\n";                                   // number of func calls
 
     // write the optimized fitness and the original fitness
     csv << perm->getBestVal() << '\n';    
@@ -139,9 +139,9 @@ void Memory::writeCSV(Matrix* jobs, Matrix* comp, Permutation* perm, const int a
 
     // write the permutation sequence
     csv << "\nPermutaion sequence:\n";
-    csv << perm->getBest(0);
+    csv << perm->getBest(0) + 1;
     for (int i = 1; i < perm->getSize(); ++i)
-        csv << "," << perm->getBest(i);
+        csv << "," << perm->getBest(i) + 1;
     csv << '\n';
 
     // write the completion times
