@@ -6,9 +6,13 @@
 #include "Memory.h"
 #include "Permutation.h"
 
+void run();
 void runFlowshop();
+void runCustomPermutation();
 int  flowshop(Memory* mem, const int datafile, const int alg);
-int  fssType(Matrix* jobs, Matrix* comp, Permutation* perm, const int alg);
+
+int fssType    (Matrix* jobs, Matrix* comp, const int alg);
+int fssTypePerm(Matrix* jobs, Matrix* comp, Permutation* perm, const int alg);
 
 int fssPerm  (Matrix* processTimes, Matrix* finalTimes, Permutation* perm);
 int fssbPerm (Matrix* processTimes, Matrix* finalTimes, Permutation* perm);

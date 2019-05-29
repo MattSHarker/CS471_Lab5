@@ -13,35 +13,60 @@
  */
 
 #include <climits>
-// #include <ctpl_stl.h>
+#include <fstream>
 #include <iostream>
+#include <string>
 #include <thread>
 #include <vector>
 
+#include "customPermutation.h"
 #include "flowshop.h"
 #include "ThreadPool.h"
 
 using namespace std;
 
+void run()
+{
+    int custPerm;
+
+    // read in wether to use a customer permutation or run all
+    string path = "parameters/custPerm.txt";
+    ifstream file(path);
+    if (file.is_open())
+    {
+        file >> custPerm;
+        file.close();
+
+        if (custPerm == 1)
+            customPermutation();
+        else
+            runFlowshop();
+    }
+    else
+    {
+        cout << "Custom permutation file not found, continuing with NEH algorithm\n";
+        runFlowshop();
+    }
+}
+
 void runFlowshop()
 {
-    // get the # of possible active threads 
-    Memory* mem = new Memory();
+    // set up threadpool
     int numThreads =  thread::hardware_concurrency();
-
-    // setup thread pooling
-    ThreadPool tp(numThreads);       // 4 active threads because it's a safe number
+    ThreadPool tp(numThreads);
     vector<future<int>> futures;
     
     // for each algorithm
-    for (int i = 1; i < 3; ++i)
+    for (int i = 0; i <= 0; ++i)
     {
+        Memory* mem = new Memory();
+
         if      (i == 0) cout << "Starting FSS...\n";
         else if (i == 1) cout << "Starting FSSB...\n";
         else if (i == 2) cout << "Starting FSSNW...\n";
 
         // for each file
-        for (int j = 1; j <= 120; ++j)
+        for (int j = 0; j <= 10; ++j)
         {
             // add it to the pool
             futures.emplace_back(
@@ -51,9 +76,7 @@ void runFlowshop()
 
         // join them
         for (int j = 0; j < futures.size(); ++j)
-        {
             int val = futures[j].get();
-        }
 
         // clear future list
         futures.clear();
@@ -61,9 +84,9 @@ void runFlowshop()
         if      (i == 0) cout << "FSS has completed\n";
         else if (i == 1) cout << "FSSB has completed\n";
         else if (i == 2) cout << "FSSNW has completed\n";
-    }
 
-    delete mem;
+        delete mem;
+    }
 }
 
 int flowshop(Memory* mem, const int datafile, const int alg)
@@ -76,22 +99,20 @@ int flowshop(Memory* mem, const int datafile, const int alg)
     Permutation* perm = new Permutation(jobs->getCols());
     initialize(jobs, perm); // adds the first element to the permutation
 
-    // add each other element to be permutated
+    // for every other element to be permutated
     for (int j = 1; j < jobs->getCols(); ++j)
     {
-        // var to hold the best val of this iteration
-        int curBest = INT_MAX;
+        int curBest = INT_MAX; // holds best val of the iteration
 
-        // add the next element and set the position to the proper index
+        // add the next element
         perm->addElement(perm->getJobOrder(j));
-        perm->setPos(perm->getCurSize()-1);
 
-        // go through each permutation of the array and keep the best
+        // go through each NEH permutation of the array and keep the best
         for (int k = 0; k <= perm->getCurSize(); ++k)
         {
             // get the fitness of the permutation
             comp->clearMatrix();
-            int fit = fssType(jobs, comp, perm, alg);
+            int fit = fssTypePerm(jobs, comp, perm, alg);
             mem->incrFuncCalls();
 
             // if it's better (lower) store the fitness and the permutaion
@@ -100,6 +121,17 @@ int flowshop(Memory* mem, const int datafile, const int alg)
                 curBest = fit;              // save the fitness value
                 perm->setCurrentToBest();   // save the current permutation
             }
+
+            ///////////////////////////////////////////
+            // if it's the same randomly choose one
+            //
+            //
+            //
+            //
+            ///////////////////////////////////////////
+
+
+
 
             // if it's not the last permutation get the next one
             if (perm->getPos() > 0) perm->nextPermutation();
@@ -112,10 +144,11 @@ int flowshop(Memory* mem, const int datafile, const int alg)
         // rerun the flowshop to store the correct data to $comp
         comp->clearMatrix();
     }
-        int temp = fssType(jobs, comp, perm, alg);
 
-    // save the relevant data
-    mem->writeCSV(jobs, comp, perm, alg, datafile);
+    // rerun to have the correct info in comp
+    int temp = fssTypePerm(jobs, comp, perm, alg);
+
+    mem->writeCSV(jobs, comp, perm, alg, datafile); // write data to a file
 
     // delete the objects
     delete jobs;
@@ -125,21 +158,23 @@ int flowshop(Memory* mem, const int datafile, const int alg)
     return 0;
 }
 
-
-
-int fssType(Matrix* jobs, Matrix* comp, Permutation* perm, const int alg)
+int fssType(Matrix* jobs, Matrix* comp, const int alg)
 {
     switch(alg)
     {
-        case 0:
-            // FSS
-            return fssPerm(jobs, comp, perm);
-        case 1:
-            // FSSB
-            return fssbPerm(jobs, comp, perm);
-        case 2:
-            // FSSNW
-            return fssnwPerm(jobs, comp, perm);
+        case 0: return fss(jobs, comp);
+        case 1: return fssb(jobs, comp);
+        case 2: return fssnw(jobs, comp);
+    }
+}
+
+int fssTypePerm(Matrix* jobs, Matrix* comp, Permutation* perm, const int alg)
+{
+    switch(alg)
+    {
+        case 0: return fssPerm(jobs, comp, perm);
+        case 1: return fssbPerm(jobs, comp, perm);
+        case 2: return fssnwPerm(jobs, comp, perm);
     }
 }
 
