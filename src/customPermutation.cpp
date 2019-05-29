@@ -77,6 +77,8 @@ void initVars(string &filename, int &alg, int &size, int* &custPerm)
         cout << "Error reading custom permutation file, exiting program\n";
         exit(EXIT_FAILURE);
     }
+
+    file.close();
 }
 
 void initPerm(Permutation* perm, int* custPerm)
