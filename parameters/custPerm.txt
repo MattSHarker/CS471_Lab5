@@ -1,0 +1,17 @@
+1
+0.txt
+0
+5
+2 4 5 3 1
+
+
+
+|------|-----------------------------|
+| Line | What it is                  |
+|------|-----------------------------|
+|   1  | Customer permutation toggle |  1 to use perm, otherwise no perm
+|   2  | File to optimize            |
+|   3  | Which algorithm to use      |  0-FSS, 1-FSSB, 2-FSSNW
+|   4  | How many jobs the file has  |
+|   5  | The permutation of jobs     |
+|------|-----------------------------|
