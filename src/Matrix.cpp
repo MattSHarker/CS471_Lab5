@@ -1,7 +1,7 @@
 
 #include <fstream>
 #include <iostream>
-#include <sstream>
+// #include <sstream>
 #include <string>
 
 #include "Matrix.h"
@@ -34,6 +34,54 @@ Matrix::Matrix(int filename)
 {
     // finalize the pathname of the file
     string pathname = "DataFiles/" + to_string(filename) + ".txt";
+
+    // string to hold the current line
+    string val;
+
+    // open the file
+    ifstream file(pathname);
+    if (file.is_open())
+    {
+        // first line contains rows and columns
+        file >> rows;
+        file >> cols;
+
+        // construct the matrix
+        matrix = new int*[rows];
+        for (int i = 0; i < rows; ++i)
+            matrix[i] = new int[cols];
+
+        // read in and assign the values to the matrix
+        for (int i = 0; i < rows; ++i)
+        {
+            // set the value of the elements in the row
+            for (int j = 0; j < cols; ++j)
+            {
+                // get the value and assign it
+                file >> val;
+                matrix[i][j] = stoi(val);
+            }
+        }
+    }
+    else
+    {
+        // if the file could not be opened
+        cout << "Matrix input file count not be found\n";
+        exit(EXIT_FAILURE);
+    }
+
+    // close the file
+    file.close();
+
+    // setup the jobCosts array
+    jobCosts = new int[cols];
+    generateJobCosts();
+}
+
+Matrix::Matrix(string filename)
+{
+    // finalize the pathname of the file
+    string pathname = "DataFiles/" + filename;
 
     // string to hold the current line
     string val;

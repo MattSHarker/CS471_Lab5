@@ -20,7 +20,7 @@ public:
     // constructors and destructors
     Matrix(const int row, const int col);
     Matrix(int fileName);
-
+    Matrix(string fileName);
     ~Matrix();
 
     // functions for constants
