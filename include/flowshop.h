@@ -9,7 +9,7 @@
 void run();
 void runFlowshop();
 void runCustomPermutation();
-int  flowshop(Memory* mem, const int datafile, const int alg);
+int  flowshop(const int datafile, const int alg);
 
 int fssType    (Matrix* jobs, Matrix* comp, const int alg);
 int fssTypePerm(Matrix* jobs, Matrix* comp, Permutation* perm, const int alg);
@@ -34,5 +34,6 @@ int newTimeFSSBPerm (Matrix* jobs, Matrix* compTime, Permutation* perm, const in
 int newTimeFSSNWPerm(Matrix* jobs, Matrix* compTime, Permutation* perm, const int r, const int c);
 
 void initialize(Matrix* jobTimes, Permutation* perm);
+void initStartEnd(int &start, int &end);
 
 #endif
