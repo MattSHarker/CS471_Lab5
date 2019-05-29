@@ -11,6 +11,7 @@
 Memory::Memory()
 {
     funcCalls = 0;
+    bestPermutation = new int[200];
 }
 
 Memory::Memory(const int s)
