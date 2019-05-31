@@ -1,12 +1,24 @@
-
+/**
+ * @file customPermutation.cpp
+ * @author Matthew Harker
+ * @brief 
+ * @version 1.0
+ * @date 2019-05-31
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 #include <fstream>
 #include <iostream>
 
 #include "customPermutation.h"
 #include "flowshop.h"
 
-// using namespace std;
-
+/**
+ * @brief The overall class that runs the ability to get the
+ *          makespan of a system using a specified job sequence.
+ * 
+ */
 void customPermutation()
 {
     // vars for the permutation
@@ -31,6 +43,13 @@ void customPermutation()
     delete[] custPerm;
 }
 
+/**
+ * @brief Takes in a job time matrix and calculates the makespan
+ *          based on a user input job sequence
+ * 
+ * @param jobs  The matrix containing job run times
+ * @param alg   Which algorithm to put the system though
+ */
 void runCustPerm(Matrix* jobs, const int alg)
 {
     // create another matrix object to hold final times
@@ -48,7 +67,15 @@ void runCustPerm(Matrix* jobs, const int alg)
     delete comp;
 }
 
-
+/**
+ * @brief Initializes variables based on parameters in the custPerm.txt
+ *          file.
+ * 
+ * @param filename  The name of the file to read in
+ * @param alg       Which algorithm to put the matrix through
+ * @param size      How many jobs are in the system
+ * @param custPerm  The permutation of job orders
+ */
 void initVars(string &filename, int &alg, int &size, int* &custPerm)
 {
     // open file to read in parameters
@@ -81,20 +108,14 @@ void initVars(string &filename, int &alg, int &size, int* &custPerm)
     file.close();
 }
 
-void initPerm(Permutation* perm, int* custPerm)
-{
-    // add all the elements from the array to the object in order
-    for (int i = 0; i < perm->getSize(); ++i)
-        perm->addElement(custPerm[i]);
-}
 
 /**
  * @brief Modifies a matrix so the columns are permutated relative
  *          to the original one.
  * 
- * @param jobs 
- * @param perm 
- * @param custPerm 
+ * @param jobs      The matrix containing the original job run times
+ * @param perm      A matrix to hold the permutated job sequence
+ * @param custPerm  An array that contains the sequence of jobs
  */
 void initPermMatrix(Matrix* jobs, Matrix* perm, int* custPerm)
 {

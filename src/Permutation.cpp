@@ -1,12 +1,25 @@
-
-#include <iostream>
+/**
+ * @file Permutation.cpp
+ * @author Matthew Harker
+ * @brief A class that contains information to help with the NEH algorithm
+ * @version 1.0
+ * @date 2019-05-30
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 #include <climits>
+#include <iostream>
 
 #include "Permutation.h"
-// #include "Matrix.h"
 
 using namespace std;
 
+/**
+ * @brief Construct a new Permutation:: Permutation object
+ * 
+ * @param s the number of jobs in the system (size)
+ */
 Permutation::Permutation(const int s)
 {
     size    = s;
@@ -25,22 +38,39 @@ Permutation::Permutation(const int s)
         allJobs[i] = new int[size];
 }
 
+/**
+ * @brief Destroy the Permutation:: Permutation object
+ * 
+ */
 Permutation::~Permutation()
 {
     delete[] perm;
 }
 
+/**
+ * @brief Returns the value of pos
+ * 
+ * @return int The position of the most recently added element
+ */
 int Permutation::getPos()
 {
     return pos;
 }
 
-
+/**
+ * @brief Sets the value of pos
+ * 
+ * @param newPos The new position of the most recently added element
+ */
 void Permutation::setPos(const int newPos)
 {
     pos = newPos;
 }
 
+/**
+ * @brief Decriments the value of pos by 1
+ * 
+ */
 void Permutation::nextPos()
 {
     if (pos > 0)
@@ -52,39 +82,70 @@ void Permutation::nextPos()
     }
 }
 
+/**
+ * @brief Returns the full size of the permutation array
+ * 
+ * @return int The full size of the permutation array
+ */
 int Permutation::getSize()
 {
     return size;
 }
 
-
+/**
+ * @brief Returns the current size of the permutation array
+ * 
+ * @return int The current size of the permutation array
+ */
 int Permutation::getCurSize()
 {
     return curSize;
 }
 
+/**
+ * @brief Sets the current size of the permutation array
+ * 
+ * @param s The current size of the permutation array
+ */
 void Permutation::setCurSize(const int s)
 {
     curSize = s;
 }
 
+/**
+ * @brief Incriments the current size of the permutation array by 1
+ * 
+ */
 void Permutation::incrimentCurSize()
 {
     ++curSize;
 }
 
-
+/**
+ * @brief Returns the value of bestVal
+ * 
+ * @return int the value of the current best permutation
+ */
 int Permutation::getBestVal()
 {
     return bestVal;
 }
 
+/**
+ * @brief Sets the value of bestVal
+ * 
+ * @param newVal The new value of the newest best found permutation
+ */
 void Permutation::setBestVal(const int newVal)
 {
     bestVal = newVal;
 }
 
-
+/**
+ * @brief Adds an element to the perm matrix
+ * 
+ * @param newElem The next job to add to the sequence
+ */
 void Permutation::addElement(const int newElem)
 {
     // only do it if it won't go out of range
@@ -101,6 +162,10 @@ void Permutation::addElement(const int newElem)
     }
 }
 
+/**
+ * @brief The next permutation of the NEH algorithm
+ * 
+ */
 void Permutation::nextPermutation()
 {
     // only do it if it won't go out of range
@@ -116,16 +181,32 @@ void Permutation::nextPermutation()
     }
 }
 
+/**
+ * @brief Returns the job in the specified element of the perm array
+ * 
+ * @param elem The element to get the job index of
+ * @return int An index of the job run time matrix
+ */
 int Permutation::getPerm(const int elem)
 {
     return perm[elem];
 }
 
+/**
+ * @brief Returns the full perm array
+ * 
+ * @return int* The current best permutation
+ */
 int* Permutation::getPerm()
 {
     return perm;
 }
 
+/**
+ * @brief Resizes the perm array
+ * 
+ * @param newSize The new size of the perm array
+ */
 void Permutation::resize(const int newSize)
 {
     // change the value of size
@@ -139,6 +220,10 @@ void Permutation::resize(const int newSize)
     delete[] temp;
 }
 
+/**
+ * @brief Prints the current permutation
+ * 
+ */
 void Permutation::printCurrentPermutation()
 {
     for (int i = 0; i < curSize; ++i)
@@ -146,7 +231,10 @@ void Permutation::printCurrentPermutation()
     cout << '\n';
 }
 
-
+/**
+ * @brief Sets the values of best to those of perm
+ * 
+ */
 void Permutation::setCurrentToBest()
 {
     // copy all the values from perm into best
@@ -154,6 +242,10 @@ void Permutation::setCurrentToBest()
         best[i] = perm[i];
 }
 
+/**
+ * @brief Sets the values of perm to those of best
+ * 
+ */
 void Permutation::setBestToCurrent()
 {
     // copy all values from best into perm (or 0 for those that don't exist)
@@ -165,35 +257,64 @@ void Permutation::setBestToCurrent()
         perm[i] = 9;
 }
 
+/**
+ * @brief Returns an element from the best array
+ * 
+ * @param elem The element to return
+ * @return int An index of the job run time matrix
+ */
 int Permutation::getBest(const int elem)
 {
     return best[elem];
 }
 
+/**
+ * @brief Returns the full best array
+ * 
+ * @return int* The full best array
+ */
 int* Permutation::getBest()
 {
     return best;
 }
 
-
-
-
-
+/**
+ * @brief Returns an index from the allJobs matrix
+ * 
+ * @param elem The element containing an index of the job run time array
+ * @return int The index of the job run time array
+ */
 int Permutation::getJobOrder(const int elem)
 {
     return allJobs[0][elem];
 }
 
+/**
+ * @brief Returns the total job cost from the allJobs matrix
+ * 
+ * @param elem The element containg the total job cost
+ * @return int The total job cost
+ */
 int Permutation::getJobValue(const int elem)
 {
     return allJobs[1][elem];
 }
 
+/**
+ * @brief Returns the full array of job indices
+ * 
+ * @return int* The array of job indices
+ */
 int* Permutation::getJobOrder()
 {
     return allJobs[0];
 }
 
+/**
+ * @brief Sets the total job cost values of the allJ
+ * 
+ * @param costs 
+ */
 void Permutation::setAllJobs(const int* costs)
 {
     for (int i = 0; i < size; ++i)
@@ -231,6 +352,10 @@ void Permutation::sortAllJobs()
     }
 }
 
+/**
+ * @brief Prints the values of allJobs
+ * 
+ */
 void Permutation::printAllJobs()
 {
     // print the job indices
@@ -244,7 +369,10 @@ void Permutation::printAllJobs()
     cout << '\n';
 }
 
-
+/**
+ * @brief Prints the variables of the object
+ * 
+ */
 void Permutation::print()
 {
     cout << "size: "    << size    << "\n";
@@ -255,6 +383,3 @@ void Permutation::print()
     printAllJobs();
 
 }
-
-
-

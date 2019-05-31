@@ -1,4 +1,14 @@
-
+/**
+ * @file fss.cpp
+ * @author Matthew Harker
+ * @brief Contains the algorithms to run a system through the
+ *          basic FSS algorithm.
+ * @version 1.0
+ * @date 2019-05-30
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 #include "fss.h"
 
 /**
@@ -7,7 +17,7 @@
  * @param jobs      The matrix of jobsess compTime
  * @param compTime  The resulting matrix of completion compTime
  * @param cols      How many columns to run through the algorithm
- * @return int      The result length the jobs will take
+ * @return int      The makespan of the jobs
  */
 int fss(Matrix* jobs, Matrix* compTime)
 {
@@ -26,9 +36,15 @@ int fss(Matrix* jobs, Matrix* compTime)
     return compTime->getVal(compTime->getRows()-1,  compTime->getCols()-1);
 }
 
-
-
-
+/**
+ * @brief The basic flowshop scheduling algorithm. This is a modified version
+ *          which runs a permutated job matrix.
+ * 
+ * @param jobs      The matrix of job run times
+ * @param compTime  The matrix of job completion times
+ * @param perm      The permutation object
+ * @return int      The resulting makespan of the permutation
+ */
 int fssPerm(Matrix* jobs, Matrix* compTime, Permutation* perm)
 {
     // retreive the curent permutation size for easier reading
@@ -48,8 +64,6 @@ int fssPerm(Matrix* jobs, Matrix* compTime, Permutation* perm)
     // return the final time
     return compTime->getVal(compTime->getRows()-1, curSize-1);
 }
-
-
 
 
 /**
@@ -72,7 +86,17 @@ int baseTimeFSS(Matrix* compTime, const int r, const int c)
     return max(compTime->getVal(r, c-1), compTime->getVal(r-1, c));
 }
 
-
+/**
+ * @brief Calculates the value for the next job completion time. Uses a
+ *          permutated job run time matrix.
+ * 
+ * @param jobs      The job run time matrix
+ * @param compTime  The matrix of job completion times
+ * @param perm      The permutation object containing the current job sequence
+ * @param r         The row to get the value of
+ * @param c         The column to get the value of
+ * @return int      The resulting job completion time
+ */
 int baseTimeFSSPerm(Matrix* jobs, Matrix* compTime, Permutation* perm, const int r, const int c)
 {
     // get the proper indices

@@ -41,8 +41,6 @@ public:
     // misc functions
     void resize(const int newRows, const int newCols);
     void print();
-    void printByFullPerm(Permutation* perm);
-    void printByCurrentPerm(Permutation* perm);
 };
 
 #endif

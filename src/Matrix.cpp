@@ -1,14 +1,27 @@
-
+/**
+ * @file Matrix.cpp
+ * @author Matthew Harker
+ * @brief Contains information to easier use 2D matrices.
+ * @version 2.0
+ * @date 2019-05-31
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 #include <fstream>
 #include <iostream>
-// #include <sstream>
 #include <string>
 
 #include "Matrix.h"
 
 using namespace std;
 
-
+/**
+ * @brief Construct a new Matrix:: Matrix object
+ * 
+ * @param r How many rows the matrix should have
+ * @param c How many columns the matrix should have
+ */
 Matrix::Matrix(const int r, const int c)
 {
     // assign the sizes
@@ -29,7 +42,11 @@ Matrix::Matrix(const int r, const int c)
     jobCosts = new int[cols];
 }
 
-
+/**
+ * @brief Construct a new Matrix:: Matrix object
+ * 
+ * @param filename The name of the file to read information from
+ */
 Matrix::Matrix(int filename)
 {
     // finalize the pathname of the file
@@ -78,6 +95,11 @@ Matrix::Matrix(int filename)
     generateJobCosts();
 }
 
+/**
+ * @brief Construct a new Matrix:: Matrix object
+ * 
+ * @param filename The name of the file to read in from
+ */
 Matrix::Matrix(string filename)
 {
     // finalize the pathname of the file
@@ -126,6 +148,10 @@ Matrix::Matrix(string filename)
     generateJobCosts();
 }
 
+/**
+ * @brief Destroy the Matrix:: Matrix object
+ * 
+ */
 Matrix::~Matrix()
 {
     if (matrix != nullptr)
@@ -139,21 +165,30 @@ Matrix::~Matrix()
         delete[] jobCosts;
 }
 
-
+/**
+ * @brief Returns the number of rows
+ * 
+ * @return int The number of rows
+ */
 int Matrix::getRows()
 {
     return rows;
 }
 
-
+/**
+ * @brief Returns the number of columns
+ * 
+ * @return int The number of columns
+ */
 int Matrix::getCols()
 {
     return cols;
 }
 
-
-
-
+/**
+ * @brief Generates the total run time for each job.
+ * 
+ */
 void Matrix::generateJobCosts()
 {
     // for each job (column)
@@ -168,32 +203,65 @@ void Matrix::generateJobCosts()
     }
 }
 
+/**
+ * @brief Returns the total job cost for one column
+ * 
+ * @param job   Which column to get the total job cost of
+ * @return int  The total job cost
+ */
 int Matrix::getJobCost(const int job)
 {
     return jobCosts[job];
 }
 
+/**
+ * @brief Returns the full jobCosts array
+ * 
+ * @return int* The jobCosts array
+ */
 int* Matrix::getJobCosts()
 {
     return jobCosts;
 }
 
-
+/**
+ * @brief Returns the value of a specified element in the matrix
+ * 
+ * @param r     The row of the element
+ * @param c     The column of the element
+ * @return int  The value of the element
+ */
 int Matrix::getVal(const int r, const int c)
 {
     return matrix[r][c];
 }
 
+/**
+ * @brief Returns the bottom right element of the matrix
+ * 
+ * @return int 
+ */
 int Matrix::getFinalVal()
 {
     return matrix[rows-1][cols-1];
 }
 
+/**
+ * @brief Sets the value of a specified element in the matrix
+ * 
+ * @param newVal The new value of the element
+ * @param r The row the element is in
+ * @param c The column the element is in
+ */
 void Matrix::setVal(int newVal, const int r, const int c)
 {
     matrix[r][c] = newVal;
 }
 
+/**
+ * @brief Sets all of the values in the matrix to 0
+ * 
+ */
 void Matrix::clearMatrix()
 {
     for (int r = 0; r < rows; ++r)
@@ -201,6 +269,12 @@ void Matrix::clearMatrix()
             matrix[r][c] = 0;
 }
 
+/**
+ * @brief Resizes the matrix. Removes all data in the matrix
+ * 
+ * @param newR The new amount of rows
+ * @param newC The new amount of columns
+ */
 void Matrix::resize(const int newR, const int newC)
 {
     // assign the size values
@@ -222,7 +296,7 @@ void Matrix::resize(const int newR, const int newC)
 }
 
 /**
- * @brief Prints out the information of the Matrix object
+ * @brief Prints out some information of the Matrix object
  * 
  */
 void Matrix::print()
@@ -240,76 +314,3 @@ void Matrix::print()
         cout << "\n";
     }
 }
-
-void Matrix::printByFullPerm(Permutation* perm)
-{
-    // print out row/col numbers
-    cout << "Rows:    " << rows << "\n";
-    cout << "Columns: " << cols << "\n";
-
-    // print out the matrix
-    for (int r = 0; r < rows; ++r)
-    {
-        for (int c = 0; c < cols; ++c)
-        {
-            int index = perm->getJobOrder(c);
-            cout << matrix[r][index] << '\t';
-
-        }
-
-        cout << '\n';
-    }
-    cout << '\n';
-
-    for (int c = 0; c < cols; ++c)
-    {
-        cout << perm->getJobValue(c) << '\t';
-    }
-    cout << '\n';
-
-    for (int c = 0; c < cols; ++c)
-    {
-        cout << perm->getJobOrder(c) << '\t';
-    }
-    cout << '\n';
-}
-
-
-void Matrix::printByCurrentPerm(Permutation* perm)
-{
-    // print out row/col numbers
-    cout << "Rows:    " << rows << "\n";
-    cout << "Columns: " << cols << "\n";
-
-    // print out the matrix
-    for (int r = 0; r < rows; ++r)
-    {
-        for (int c = 0; c < perm->getCurSize(); ++c)
-        {
-            int index = perm->getPerm(c);
-            cout << matrix[r][index] << '\t';
-
-        }
-
-        cout << '\n';
-    }
-    cout << '\n';
-
-    for (int c = 0; c < cols; ++c)
-    {
-        cout << perm->getJobValue(c) << '\t';
-    }
-    cout << '\n';
-
-    for (int c = 0; c < cols; ++c)
-    {
-        cout << perm->getJobOrder(c) << '\t';
-    }
-    cout << '\n';
-}
-
-
-
-
-
-

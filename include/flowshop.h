@@ -34,6 +34,6 @@ int newTimeFSSBPerm (Matrix* jobs, Matrix* compTime, Permutation* perm, const in
 int newTimeFSSNWPerm(Matrix* jobs, Matrix* compTime, Permutation* perm, const int r, const int c);
 
 void initialize(Matrix* jobTimes, Permutation* perm);
-void getParameters(int &start, int &end, int &algStart, int &algEnd);
+void initParameters(int &start, int &end, int &algStart, int &algEnd);
 
 #endif

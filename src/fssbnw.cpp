@@ -1,4 +1,14 @@
-
+/**
+ * @file fssbnw.cpp
+ * @author Matthew Harker
+ * @brief Contains the algorithms to run a system through the
+ *          FSSNW algorithm
+ * @version 1.0
+ * @date 2019-05-31
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 #include "fssnw.h"
 
 
@@ -27,6 +37,15 @@ int fssnw(Matrix* jobs, Matrix* compTime)
     return compTime->getVal(compTime->getRows()-1, compTime->getCols()-1);
 }
 
+/**
+ * @brief The flowshop scheduling with no wait algorithm. This is a modified version
+ *          which runs a permutated job matrix.
+ * 
+ * @param jobs      The matrix of job run times
+ * @param compTime  The matrix of job completion times
+ * @param perm      The permutation object
+ * @return int      The resulting makespan of the permutation
+ */
 int fssnwPerm(Matrix* jobs, Matrix* compTime, Permutation* perm)
 {
     // retreive the curent permutation size for easier reading
@@ -78,6 +97,17 @@ int newTimeFSSNW(Matrix* jobs, Matrix* compTime, const int r, const int c)
     return compTime->getVal(r-1, c) + jobs->getVal(r, c);
 }
 
+/**
+ * @brief Calculates the value for the next job completion time. Uses a
+ *          permutated job run time matrix.
+ * 
+ * @param jobs      The job run time matrix
+ * @param compTime  The matrix of job completion times
+ * @param perm      The permutation object containing the current job sequence
+ * @param r         The row to get the value of
+ * @param c         The column to get the value of
+ * @return int      The resulting job completion time
+ */
 int newTimeFSSNWPerm(Matrix* jobs, Matrix* compTime, Permutation* perm, const int r, const int c)
 {
     // get the proper indices

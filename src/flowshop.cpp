@@ -29,6 +29,10 @@
 
 using namespace std;
 
+/**
+ * @brief The function that runs the entire flowshop program
+ * 
+ */
 void run()
 {
     int custPerm;
@@ -54,6 +58,10 @@ void run()
     file.close();
 }
 
+/**
+ * @brief Runs the specified datasets through the specified algorithms.
+ * 
+ */
 void runFlowshop()
 {
     // set up threadpool
@@ -63,14 +71,14 @@ void runFlowshop()
 
     // create and initialize variables for the files to run
     int start, end, algStart, algEnd;
-    getParameters(start, end, algStart, algEnd);
+    initParameters(start, end, algStart, algEnd);
 
     // for each algorithm
     for (int i = algStart; i <= algEnd; ++i)
     {
-        if      (i == 0) cout << "Starting FSS...\n";
-        else if (i == 1) cout << "Starting FSSB...\n";
-        else if (i == 2) cout << "Starting FSSNW...\n";
+        if      (i == 1) cout << "Starting FSS...\n";
+        else if (i == 2) cout << "Starting FSSB...\n";
+        else if (i == 3) cout << "Starting FSSNW...\n";
 
         // for each file
         for (int j = start; j <= end; ++j)
@@ -81,22 +89,27 @@ void runFlowshop()
             );
         }
 
-        // join them
+        // join the threads
         for (int j = 0; j < futures.size(); ++j)
-        {
             int val = futures[j].get();
-            cout << "j: " << j+1 << endl;
-        }
 
         // clear future list
         futures.clear();
 
-        if      (i == 0) cout << "FSS has completed\n";
-        else if (i == 1) cout << "FSSB has completed\n";
-        else if (i == 2) cout << "FSSNW has completed\n";
+        if      (i == 1) cout << "FSS has completed\n";
+        else if (i == 2) cout << "FSSB has completed\n";
+        else if (i == 3) cout << "FSSNW has completed\n";
     }
 }
 
+/**
+ * @brief Optimizes a dataset using the NEH algorithm
+ * 
+ * @param datafile  The dataset to read from
+ * @param alg       The FSS algorithm to use
+ * @return int      The exit code of the function. Primarily for
+ *                      thread pooling.
+ */
 int flowshop(const int datafile, const int alg)
 {
     // create a matrix for job times and one for completion times
@@ -104,7 +117,7 @@ int flowshop(const int datafile, const int alg)
     Matrix* comp = new Matrix(jobs->getRows(), jobs->getCols());
 
     // create a memory object to record data
-    Memory* mem = new Memory(jobs->getCols());
+    Memory* mem = new Memory();
 
     // create a permutation object and initialize it
     Permutation* perm = new Permutation(jobs->getCols());
@@ -115,6 +128,8 @@ int flowshop(const int datafile, const int alg)
     mt19937 mt(rd());
     uniform_real_distribution<double> distr(0, 1);
 
+    // start a timer
+    mem->startTimer();
 
     // for every other element to be permutated
     for (int j = 1; j < jobs->getCols(); ++j)
@@ -125,7 +140,7 @@ int flowshop(const int datafile, const int alg)
         perm->addElement(perm->getJobOrder(j));
 
         // go through each NEH permutation of the array and keep the best
-        for (int k = 0; k <= perm->getCurSize(); ++k)
+        for (int k = 0; k < perm->getCurSize(); ++k)
         {
             // get the fitness of the permutation
             comp->clearMatrix();
@@ -160,10 +175,14 @@ int flowshop(const int datafile, const int alg)
         comp->clearMatrix();
     }
 
+    // stop the timer and record the timer taken
+    mem->stopTimer();
+
     // rerun to have the correct info in comp
     int temp = fssTypePerm(jobs, comp, perm, alg);
 
-    mem->writeCSV(jobs, comp, perm, alg, datafile); // write data to a file
+    // print all the data to files
+    mem->writeAllData(jobs, comp, perm, alg, datafile); // write data to a file
 
     // delete the objects
     delete jobs;
@@ -173,6 +192,15 @@ int flowshop(const int datafile, const int alg)
     return 0;
 }
 
+/**
+ * @brief A function that controls which algorithm to use. Will run the system
+ *          through the algorithm without any permutations.
+ * 
+ * @param jobs  The matrix of job run times
+ * @param comp  The matrix of job completion times
+ * @param alg   The algorithm to run the system through
+ * @return int  The resulting makespan of the system
+ */
 int fssType(Matrix* jobs, Matrix* comp, const int alg)
 {
     switch(alg)
@@ -183,6 +211,16 @@ int fssType(Matrix* jobs, Matrix* comp, const int alg)
     }
 }
 
+/**
+ * @brief A function that controls which algorithm to use. Will run the system
+ *          through the algorithm without any permutations.
+ * 
+ * @param jobs  The matrix of job run times
+ * @param comp  The matrix of job completion times
+ * @param perm  Handles information about the permutations the system will undergo
+ * @param alg   The algorithm to run the system through
+ * @return int  The resulting makespan of the system
+ */
 int fssTypePerm(Matrix* jobs, Matrix* comp, Permutation* perm, const int alg)
 {
     switch(alg)
@@ -193,7 +231,12 @@ int fssTypePerm(Matrix* jobs, Matrix* comp, Permutation* perm, const int alg)
     }
 }
 
-
+/**
+ * @brief Initializes the job run time matrix and the permutation object
+ * 
+ * @param jobs The job run time matrix
+ * @param perm The permutation object
+ */
 void initialize(Matrix* jobs, Permutation* perm)
 {
     // create the sorted job matrix in perm
@@ -203,8 +246,16 @@ void initialize(Matrix* jobs, Permutation* perm)
     perm->addElement(perm->getJobOrder(0));
 }
 
-
-void initStartEnd(int &start, int &end, int &alg)
+/**
+ * @brief Initializes parameters based off of information in the parameters.txt
+ *          file.
+ * 
+ * @param start     The first dataset to optimize
+ * @param end       The last dataset to optimize
+ * @param algStart  The first algorithm to run the system through
+ * @param algEnd    The last algorithm to run the system through
+ */
+void initParameters(int &start, int &end, int &algStart, int &algEnd)
 {
     // open file to get params
     string path = "parameters/parameters.txt";
@@ -225,14 +276,13 @@ void initStartEnd(int &start, int &end, int &alg)
         }
         else if (algStart > 0 && algStart < 4)
         {
-            algEnd = algStart
+            algEnd = algStart;
         }
         else
         {
             cout << "Specified algorithm is not within acceptable range, exiting program\n";
             exit(EXIT_FAILURE);
         }
-
     }
     else
     {
@@ -243,6 +293,3 @@ void initStartEnd(int &start, int &end, int &alg)
     // close the file
     file.close();
 }
-
-
-
