@@ -59,6 +59,14 @@ from 1-n, so sequences with repeating or missing numbers will output values that
 would be otherwise impossible to produce.
 
 
+*************************** RESULTS ***************************
+After the program finishs running, the data files in the results directory will
+be updated with the most recent values. There are two main sub-directories, one
+all of the data in a human readable format called "rawData", and one with the 
+start and end times formatted to be read in by scripts. For general use, the files
+in rawData will be easier to understand.
+
+
 *************** BUILDING, RUNNING, AND CLEANING ***************
 In order to run the program, the system must first be built:
     In a terminal, cd to the directory this readme is in,
